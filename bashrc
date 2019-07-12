@@ -1,3 +1,9 @@
+GIT_PS1_SHOWUPSTREAM=auto
+GIT_PS1_SHOWCOLORHINTS=true
+# .git-prompt.sh available here: https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh
+source ~/.git-prompt.sh
+PROMPT_COMMAND='__git_ps1 "\e[35m\w\e[37m" "\\\$ "'
+
 fm() {
     git fetch $1 $2 && git merge $1/$2
 }
@@ -19,7 +25,11 @@ alias p='git push'
 alias pu='git push --set-upstream origin $(git symbolic-ref --short HEAD)'
 alias mylog='git log --author=AUTHOR --full-history --author-date-order --date=local --format="%ae %ad %s"'
 alias cdd='cd ~/projects'
-alias cd..='cd ..'
+alias cd.='cd ..';
+alias cd..='cd ../..'
+alias cd...='cd ../../..';
+alias cd....='cd ../../../..';
+alias cd.....='cd ../../../../..'
 alias cls=clear
 alias .exit=exit
 cdd
