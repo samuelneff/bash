@@ -4,7 +4,7 @@ GIT_PS1_SHOWUPSTREAM=auto
 GIT_PS1_SHOWCOLORHINTS=true
 # .git-prompt.sh available here: https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh
 source ~/.git-prompt.sh
-PROMPT_COMMAND='__git_ps1 "\e[35m\w\e[37m" "\\\$ "'
+PROMPT_COMMAND='__git_ps1 "\e[35m\w\e[37m" "\\n\e[30m\\\$ "'
 
 # fm - Fetch and merge a branch into current branch
 #      example:
@@ -77,11 +77,16 @@ alias pu='git push --set-upstream origin $(git symbolic-ref --short HEAD)'
 # You must replace AUTHOR with somehting that uniquely idenfies you within the author field
 # (can be partial), usually email address
 #
-alias mylog='git log --author=AUTHOR --full-history --author-date-order --date=local --format="%ae %ad %s"'
+alias mylog='git log --author=samuel --full-history --author-date-order --date=local --format="%ae %ad %s"'
 
 # cdd
 # change directory to development, which I always have as ~/projects
 alias cdd='cd ~/projects'
+
+# mvnr
+# Runs MVN project fully
+#alias mvnr='mvn clean verify && mvn spring-boot:run -Dspring.profiles.active=local'
+alias mvnr='mvn clean verify && mvn spring-boot:run -Dspring-boot.run.profiles=local'
 
 # cd.
 # change directory up; one level for each . entered
@@ -101,3 +106,16 @@ alias .exit=exit
 # print out the aliases when opening a new terminal to be helpful, does not include functions though like fm and bd
 alias
 
+export BASH_SILENCE_DEPRECATION_WARNING=1
+
+export JAVA_HOME=$(/usr/libexec/java_home)
+export GRADLE_HOME=/usr/local/Cellar/gradle/6.4/
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/tools
+export PATH=$PATH:$ANDROID_HOME/tools/bin
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
