@@ -6,6 +6,15 @@ GIT_PS1_SHOWCOLORHINTS=true
 source ~/.git-prompt.sh
 PROMPT_COMMAND='__git_ps1 "\e[35m\w\e[37m" "\\n\e[30m\\\$ "'
 
+# title - sets the title of tab in Hyper
+title() {
+  if [ -z {$1+x} ]; then
+    echo -e "\033]0;${$1-$PWD}"
+  else
+    echo -e "\033]0;$1"
+  fi
+}
+
 # fm - Fetch and merge a branch into current branch
 #      example:
 # fm upstream dev
