@@ -21,15 +21,27 @@ title() {
 }
 
 # fm - Fetch and merge a branch into current branch
-#      example:
-# fm upstream dev
+#   Usage:
 #
-# same as
+#        fm [remote] [branch]
+#             remote - which remote to pull from, usually `origin`
+#             branch - which branch to pull, usually either the current or `main`
 #
-# git fetch upstream dev && git merge upstream/dev
+#             if neither `remote` or `branch` are specified then they are assumed to
+#             be `fm origin main`.
+#
+#    Example:
+#
+#         fm upstream dev
+#
+#         .. is equivalent to ..
+#
+#         git fetch upstream dev && git merge upstream/dev
 #
 fm() {
-    git fetch $1 $2 && git merge $1/$2
+  ORIGIN="${1:-origin}"
+  BRANCH="${2:-main}"
+  git fetch $ORIGIN $BRANCH && git merge --no-edit $ORIGIN/$BRANCH
 }
 
 #
@@ -37,17 +49,18 @@ fm() {
 #
 # bd [pattern]
 #
-# Deletes any ALREADY MERGED branches that match a pattern, but will never delete current, master, or dev branches
+# Deletes any ALREADY MERGED branches that match a pattern, but will never delete current,
+# `main`, `master`, or `dev` branches.
 #
 # Useful for cleaning up old branches and is always safe to run since it will only delete branches that are already
 # merged to the current branch.
 #
-# Common use case is finish a feature branch, push it, create PR, merge PR, then on dev branch fm upstream dev,
-# then you can bd your old feature branch to safely remove the feature branch knowing it's already been merged
-# to current
+# Common use case is finish a feature branch, push it, create PR, merge PR, which should automatically delete
+# the branch on remote (depends on GitHub settings). Then you can `bd`` your old feature branch to safely remove it
+# knowing it's already been merged to current.
 #
 bd() {
-    git branch --merged | egrep -v "(^\*|^master$|^dev$)" | grep "$1" | xargs git branch -d
+    git branch --merged | egrep -v "(^\*|^main$|^master$|^dev$)" | grep "$1" | xargs git branch -d
 }
 
 alias a='git add'
@@ -70,7 +83,7 @@ alias d='git diff'
 # git status for current folder forward only (not whole repo)
 alias s='git status ./'
 alias f='git fetch'
-alias m='git merge'
+alias m='git merge --no-edit'
 alias p='git push'
 
 # pu
@@ -88,19 +101,13 @@ alias pu='git push --set-upstream origin $(git symbolic-ref --short HEAD)'
 #
 # Shows nicely formatted git log for only your commits
 #
-# You must replace AUTHOR with somehting that uniquely idenfies you within the author field
-# (can be partial), usually email address
+# Still needs some work on the author sub-command.
 #
-alias mylog='git log --author=samuel --full-history --author-date-order --date=local --format="%ae %ad %s"'
+# alias mylog="git log --perl-regexp --author='(`git config --get user.email`|`GH_DOMAIN=$(git remote -v | sed -nE 's/.+(git@[^:]+):.+\(push\)/\1/p') ` --full-history --author-date-order --date=format:'%Y-%m-%d %H:%M:%S' --format='%ae %ad %s'"
 
 # cdd
 # change directory to development, which I always have as ~/projects
 alias cdd='cd ~/projects'
-
-# mvnr
-# Runs MVN project fully
-#alias mvnr='mvn clean verify && mvn spring-boot:run -Dspring.profiles.active=local'
-alias mvnr='mvn clean verify && mvn spring-boot:run -Dspring-boot.run.profiles=local'
 
 # cd.
 # change directory up; one level for each . entered
@@ -117,6 +124,11 @@ alias cd.....='cd ../../../../..'
 alias cls=clear
 alias .exit=exit
 
+# other useful stuff
+alias uuid="uuidgen | tr '[:upper:]' '[:lower:]'"
+alias python=python3
+alias ls='ls -AFGvw' # -d for directories not recurisve, but then need to modify if target is itself a directory
+
 # print out the aliases when opening a new terminal to be helpful, does not include functions though like fm and bd
 alias
 
@@ -129,7 +141,11 @@ export PATH=$PATH:$ANDROID_HOME/emulator
 export PATH=$PATH:$ANDROID_HOME/tools
 export PATH=$PATH:$ANDROID_HOME/tools/bin
 export PATH=$PATH:$ANDROID_HOME/platform-tools
+export PATH=$PATH:$HOME/Library/Python/3.9/bin
+export PATH=/Users/samuelneff/projects/waterlily/waterlily-ltc-planning-app/node_modules/.bin:$PATH
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
 [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+eval `ssh-agent -s` > /dev/null
